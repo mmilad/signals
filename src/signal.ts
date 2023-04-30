@@ -1,28 +1,13 @@
 type EffectFunction = () => void;
-type Signal<T> = [
-  () => T,
-  (v:T) => void
-]
+type ComputedFunction<T> = () => T;
+type Signal<T> = [() => T, (v: T) => void];
 
 const context: EffectFunction[] = [];
-
 function getCurrentObserver() {
   return context[context.length - 1];
 }
 
-function createEffect(fn: EffectFunction) {
-  const execute = () => {
-    context.push(execute);
-    try {
-      fn();
-    } finally {
-      context.pop();
-    }
-  };
-  execute();
-}
-
-function createSignal<T>(value: T): Signal<T> {
+function signal<T>(value: T): Signal<T> {
   const subscribers: Set<EffectFunction> = new Set();
 
   const read = (): T => {
@@ -39,4 +24,24 @@ function createSignal<T>(value: T): Signal<T> {
   };
 
   return [read, write];
+}
+
+function effect(fn: EffectFunction) {
+  const execute = () => {
+    context.push(execute);
+    try {
+      fn();
+    } finally {
+      context.pop();
+    }
+  };
+  execute();
+}
+
+function computed<T>(fn: ComputedFunction<T>) {
+  const _signal = signal(null as T)
+  effect(() => {
+    _signal[1](fn())
+  })
+  return _signal;
 }
