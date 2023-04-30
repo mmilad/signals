@@ -1,19 +1,23 @@
-const signalA = signal(1);
-const signalB = signal(1);
+const [r, w] = signal(1);
 
-const computedSignal = computed(() => signalA[0]() * signalB[0]()) 
-let i = 0;
 setInterval(() => {
-  i++;
-  signalA[1](signalA[0]() + 1);
-  if ((i / 10) >> 0) {
-    i = 0;
-    signalB[1](signalB[0]() + 1);
-  }
-}, 1000);
+  w(r() + 1);
+}, 2000);
 
-effect(() => {
-    console.log(
-    `computedSignal value is ${computedSignal[0]()}`
-  );
+const cmp = computed(() => {
+  const list = document.createElement("ul");
+  for (let i = 0; i < r(); i++) {
+    const listItem = document.createElement("li");
+    listItem.innerHTML = `i am list item Nr. ${i + 1}`;
+    list.appendChild(listItem);
+  }
+  return list;
+});
+
+window.addEventListener("load", function () {
+  effect(() => {
+    document.body.innerHTML = "";
+    document.body.appendChild(cmp[0]());
+    console.log(`cmp value is ${cmp[0]()}`);
+  });
 });
