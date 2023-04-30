@@ -81,4 +81,19 @@ effect(() => {
 });
 ```
 
-the value of computedSignal will update whenever the value of signalA or signalB changes
+The value of computedSignal will update whenever the value of signalA or signalB changes.
+You can return any value you want with an computed signal. For example return a list element with a number of list items.
+
+
+```
+const [r, w] = signal(1);
+const cmp = computed(() => {
+  const list = document.createElement("ul");
+  for (let i = 0; i < r(); i++) {
+    const listItem = document.createElement("li");
+    listItem.innerHTML = `i am list item Nr. ${i + 1}`;
+    list.appendChild(listItem);
+  }
+  return list;
+});
+```

@@ -39,9 +39,9 @@ function effect(fn: EffectFunction) {
 }
 
 function computed<T>(fn: ComputedFunction<T>) {
-  const _signal = signal(null as T)
+  const _signal = signal(null as T);
   effect(() => {
-    _signal[1](fn())
-  })
+    _signal[1](fn());
+  });
   return _signal;
 }
